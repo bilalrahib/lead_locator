@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Welcome to {{ company_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #fb6d00; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background-color: #f9f9f9; }
+        .features { background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0; }
+        .footer { padding: 20px; text-align: center; color: #666; font-size: 12px; }
+        .button { background-color: #fb6d00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to {{ company_name }}!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            
+            <p>Welcome to {{ company_name }}! We're excited to have you on board.</p>
+            
+            <div class="features">
+                <h3>What you can do with {{ company_name }}:</h3>
+                <ul>
+                    <li>🎯 <strong>Smart Location Discovery</strong> - Find optimal vending locations using AI</li>
+                    <li>📝 <strong>AI-Powered Sales Scripts</strong> - Generate custom sales scripts</li>
+                    <li>📊 <strong>Lead Management</strong> - Organize and track your leads</li>
+                    <li>⚙️ <strong>Operations Dashboard</strong> - Manage your placed machines</li>
+                    <li>💰 <strong>Affiliate Program</strong> - Earn commissions by referring others</li>
+                </ul>
+            </div>
+            
+            <p>Ready to get started? Log in to your account and explore all the features we have to offer.</p>
+            
+            {% if login_url %}
+            <p style="text-align: center; margin: 30px 0;">
+                <a href="{{ login_url }}" class="button">Get Started</a>
+            </p>
+            {% endif %}
+            
+            <p>If you have any questions or need help getting started, don't hesitate to reach out to our support team.</p>
+        </div>
+        
+        <div class="footer">
+            <p>Thank you for choosing {{ company_name }}!</p>
+            <p>Happy vending!</p>
+        </div>
+    </div>
+</body>
+</html>

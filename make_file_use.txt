@@ -1,0 +1,16 @@
+# Show help
+.\make.ps1 help
+
+# Setup project
+.\make.ps1 setup-venv
+.\make.ps1 setup-env
+# Then activate: venv\Scripts\activate
+.\make.ps1 install-dev
+
+# Development
+.\make.ps1 migrate
+.\make.ps1 runserver
+
+# Testing
+.\make.ps1 test
+.\make.ps1 test-app accounts

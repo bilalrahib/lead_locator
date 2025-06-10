@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Support Ticket Created</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #fb6d00; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background-color: #f9f9f9; }
+        .ticket-info { background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0; }
+        .footer { padding: 20px; text-align: center; color: #666; font-size: 12px; }
+        .button { background-color: #fb6d00; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ company_name }} - Support Ticket Created</h1>
+        </div>
+        
+        <div class="content">
+            <p>Hi {{ user.first_name|default:user.username }},</p>
+            
+            <p>Your support ticket has been successfully created. We'll review your request and get back to you as soon as possible.</p>
+            
+            <div class="ticket-info">
+                <h3>Ticket Details</h3>
+                <p><strong>Ticket ID:</strong> #{{ ticket.id.hex|slice:":8" }}</p>
+                <p><strong>Subject:</strong> {{ ticket.subject }}</p>
+                <p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
+                <p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+                <p><strong>Created:</strong> {{ ticket.created_at|date:"F j, Y g:i A" }}</p>
+            </div>
+            
+            <p><strong>Your Message:</strong></p>
+            <div style="background-color: white; padding: 15px; border-left: 3px solid #fb6d00; margin: 15px 0;">
+                {{ ticket.description|linebreaks }}
+            </div>
+            
+            <p>You can check the status of your ticket anytime by logging into your account.</p>
+        </div>
+        
+        <div class="footer">
+            <p>Thank you for using {{ company_name }}!</p>
+            <p>If you have any questions, please don't hesitate to contact us.</p>
+        </div>
+    </div>
+</body>
+</html>
