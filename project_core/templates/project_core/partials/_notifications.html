@@ -1,0 +1,8 @@
+{% if current_notifications %}
+    {% for notification in current_notifications %}
+        <div class="alert alert-{{ notification.notification_type|default:'info' }} alert-dismissible fade show" role="alert">
+            {{ notification.message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
