@@ -1,0 +1,218 @@
+{% extends "project_core/base.html" %}
+
+{% block title %}Welcome to Vending Hive{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <section class="py-5 text-center">
+        <h1 class="display-4">Manage Your Vending Machines Smarter</h1>
+        <p class="lead">Vending Hive provides cutting-edge tools to monitor, manage, and optimize your vending operations.</p>
+        <p>
+            <a href="/signup" class="btn btn-primary my-2">Start Free Trial</a>
+            <a href="/features" class="btn btn-secondary my-2">Learn More</a>
+        </p>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <h2 class="text-center mb-4">Key Features</h2>
+        <div class="row text-center">
+            {% if features %}
+                {% for feature in features %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="feature-icon mb-3">
+                                <i class="{{ feature.icon_class|default:'fas fa-cogs' }} fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title">{{ feature.title }}</h5>
+                            <p class="card-text">{{ feature.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <!-- Default features if context is not provided -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon mb-3"><i class="fas fa-chart-line fa-3x text-primary"></i></div>
+                        <h5 class="card-title">Real-time Monitoring</h5>
+                        <p class="card-text">Track sales, inventory, and machine status live from anywhere.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon mb-3"><i class="fas fa-dollar-sign fa-3x text-primary"></i></div>
+                        <h5 class="card-title">Sales Analytics</h5>
+                        <p class="card-text">Gain insights into performance with comprehensive sales reports.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="feature-icon mb-3"><i class="fas fa-wrench fa-3x text-primary"></i></div>
+                        <h5 class="card-title">Remote Management</h5>
+                        <p class="card-text">Adjust settings and manage your machines remotely.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-5 bg-light">
+        <h2 class="text-center mb-5">Our Plans</h2>
+        <div class="row">
+            {% if subscription_plans %}
+                {% for plan in subscription_plans %}
+                <div class="col-lg-4 mb-4">
+                    <div class="card h-100 {% if plan.name == 'PRO' %}border-primary{% endif %}">
+                        <div class="card-header text-center {% if plan.name == 'PRO' %}bg-primary text-white{% endif %}">
+                            <h4 class="my-0 fw-normal">{{ plan.name }}</h4>
+                            {% if plan.name == 'PRO' %}<span class="badge bg-warning text-dark">Most Popular</span>{% endif %}
+                        </div>
+                        <div class="card-body">
+                            <h1 class="card-title pricing-card-title text-center">${{ plan.price }}<small class="text-muted fw-light">/mo</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4 text-center">
+                                {% for feature_item in plan.features %}
+                                <li>{{ feature_item }}</li>
+                                {% endfor %}
+                            </ul>
+                            <button type="button" class="w-100 btn btn-lg {% if plan.name == 'PRO' %}btn-primary{% else %}btn-outline-primary{% endif %}">Sign up</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <!-- Default pricing plans if context is not provided -->
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header text-center"><h4 class="my-0 fw-normal">Basic</h4></div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title text-center">$10<small class="text-muted fw-light">/mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4 text-center">
+                            <li>10 Machines</li>
+                            <li>Basic Analytics</li>
+                            <li>Email Support</li>
+                        </ul>
+                        <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-header text-center bg-primary text-white">
+                        <h4 class="my-0 fw-normal">PRO</h4>
+                        <span class="badge bg-warning text-dark">Most Popular</span>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title text-center">$25<small class="text-muted fw-light">/mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4 text-center">
+                            <li>50 Machines</li>
+                            <li>Advanced Analytics</li>
+                            <li>Priority Email Support</li>
+                            <li>API Access</li>
+                        </ul>
+                        <button type="button" class="w-100 btn btn-lg btn-primary">Sign up</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header text-center"><h4 class="my-0 fw-normal">Enterprise</h4></div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title text-center">$50<small class="text-muted fw-light">/mo</small></h1>
+                        <ul class="list-unstyled mt-3 mb-4 text-center">
+                            <li>Unlimited Machines</li>
+                            <li>Full Analytics Suite</li>
+                            <li>24/7 Phone Support</li>
+                            <li>Custom Integrations</li>
+                        </ul>
+                        <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up</button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-5">
+        <h2 class="text-center mb-4">What Our Users Say</h2>
+        <div class="row">
+            {% if testimonials %}
+                {% for testimonial in testimonials %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <p class="card-text">"{{ testimonial.quote }}"</p>
+                            <footer class="blockquote-footer">{{ testimonial.author }}</footer>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <!-- Default testimonials -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <p class="card-text">"Vending Hive revolutionized how we manage our machines!"</p>
+                        <footer class="blockquote-footer">John D., Operations Manager</footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <p class="card-text">"The analytics are a game changer for optimizing our stock."</p>
+                        <footer class="blockquote-footer">Jane S., Business Owner</footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <p class="card-text">"Support is responsive and the platform is very user-friendly."</p>
+                        <footer class="blockquote-footer">Mike W., Technician</footer>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-5 bg-light">
+        <h2 class="text-center mb-4">Contact Us</h2>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <form action="/api/contact" method="POST"> <!-- Assuming a POST request to an API endpoint -->
+                    <div class="mb-3">
+                        <label for="contactName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="contactName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="contactEmail" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactSubject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="contactSubject" name="subject" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactMessage" class="form-label">Message</label>
+                        <textarea class="form-control" id="contactMessage" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

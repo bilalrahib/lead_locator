@@ -1,0 +1,151 @@
+{% extends "project_core/base.html" %}
+
+{% block title %}Your Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Welcome Header -->
+    <section class="py-4">
+        <h1 class="display-5">
+            Welcome, {% if user.is_authenticated %}{{ user.first_name|default:user.username }}{% else %}Guest{% endif %}!
+        </h1>
+    </section>
+
+    <!-- Quick Stats Section -->
+    <section id="quick-stats" class="py-3">
+        <h2 class="mb-3">Quick Stats</h2>
+        <div class="row">
+            <!-- Example Stat Card 1: Recent Tickets -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Recent Support Tickets</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ recent_tickets_count|default:"N/A" }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-ticket-alt fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example Stat Card 2: Weather (Illustrative) -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Weather at {{ weather_location|default:"Default Location" }}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    {{ weather_temperature|default:"--°C" }}
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-cloud-sun fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more stat cards here as needed for other apps/metrics -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Active Machines
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">N/A</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-robot fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    Revenue (Today)</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">$0.00</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <section id="main-dashboard-content" class="py-3">
+        <h2 class="mb-3">Main Hub</h2>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Overview</h6>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            This is where summaries from other applications (e.g., Recent Searches from Locator,
+                            Machine Status from Operations, AI insights from AI Toolkit) will be displayed.
+                            Content will be populated in later phases.
+                        </p>
+                        <p class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin fa-2x my-3"></i><br>
+                            Loading dashboard widgets...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Further sections for specific app summaries can be added here -->
+    </section>
+
+    <!-- Optional Side Navigation Placeholder -->
+    <!--
+    <div class="row">
+        <div class="col-md-3">
+            <h4>Tools</h4>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="#">Locator</a></li>
+                <li class="list-group-item"><a href="#">Operations</a></li>
+                <li class="list-group-item"><a href="#">AI Toolkit</a></li>
+            </ul>
+        </div>
+        <div class="col-md-9">
+             Main content from above would go here if using sidebar
+        </div>
+    </div>
+    -->
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card.border-left-primary { border-left: .25rem solid var(--bs-primary)!important; }
+    .card.border-left-success { border-left: .25rem solid var(--bs-success)!important; }
+    .card.border-left-info    { border-left: .25rem solid var(--bs-info)!important; }
+    .card.border-left-warning { border-left: .25rem solid var(--bs-warning)!important; }
+
+    .text-gray-300 { color: #dddfeb!important; }
+    .text-gray-800 { color: #5a5c69!important; }
+    .font-weight-bold { font-weight: 700!important; }
+</style>
+{% endblock %}
