@@ -1,0 +1,41 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Client Dashboard (Pro Locator)</h1>
+
+<a href="{% url 'pro_locator:client_create' %}" class="button">Add New Client</a>
+
+<h2>Your Clients</h2>
+{% if client_profiles %}
+    <table>
+        <thead>
+            <tr>
+                <th>Client Name</th>
+                <th>Contact Email</th>
+                <th>Contact Phone</th>
+                <th>Total Searches</th>
+                <th>Total Locations Found</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in client_profiles %}
+            <tr>
+                <td>{{ client.name }}</td>
+                <td>{{ client.contact_email|default:"N/A" }}</td>
+                <td>{{ client.contact_phone|default:"N/A" }}</td>
+                <td>{{ client.search_count|default:0 }}</td> {# Assuming a property/annotation #}
+                <td>{{ client.locations_found_count|default:0 }}</td> {# Assuming a property/annotation #}
+                <td>
+                    <a href="{% url 'pro_locator:client_detail' client.id %}">View Details</a> |
+                    <a href="{% url 'pro_locator:client_edit' client.id %}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>You haven't added any clients yet. <a href="{% url 'pro_locator:client_create' %}">Add your first client.</a></p>
+{% endif %}
+
+{% endblock %}

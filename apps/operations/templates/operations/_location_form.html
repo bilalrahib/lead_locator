@@ -1,0 +1,43 @@
+{% comment %} Assuming this will be included in a page with a form tag {% endcomment %}
+{% csrf_token %}
+{{ form.non_field_errors }}
+
+<div>
+    <label for="{{ form.name.id_for_label }}">Name:</label>
+    {{ form.name }}
+    {{ form.name.errors }}
+</div>
+<div>
+    <label for="{{ form.address.id_for_label }}">Address:</label>
+    {{ form.address }}
+    {{ form.address.errors }}
+</div>
+<div>
+    <label for="{{ form.contact_name.id_for_label }}">Contact Name:</label>
+    {{ form.contact_name }}
+    {{ form.contact_name.errors }}
+</div>
+<div>
+    <label for="{{ form.contact_phone.id_for_label }}">Contact Phone:</label>
+    {{ form.contact_phone }}
+    {{ form.contact_phone.errors }}
+</div>
+<div>
+    <label for="{{ form.contact_email.id_for_label }}">Contact Email:</label>
+    {{ form.contact_email }}
+    {{ form.contact_email.errors }}
+</div>
+<div>
+    <label for="{{ form.status.id_for_label }}">Status:</label>
+    {{ form.status }}
+    {{ form.status.errors }}
+</div>
+<div>
+    <label for="{{ form.notes.id_for_label }}">Notes:</label>
+    {{ form.notes }}
+    {{ form.notes.errors }}
+</div>
+
+{# Add other fields from ManagedLocation model as needed #}
+
+<button type="submit">Save Location</button>

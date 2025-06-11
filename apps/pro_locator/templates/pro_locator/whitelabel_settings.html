@@ -1,0 +1,52 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>White-Label Branding Settings</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <fieldset>
+        <legend>Branding Appearance</legend>
+        <div>
+            <label for="{{ form.company_logo.id_for_label }}">Company Logo:</label>
+            {% if form.instance.company_logo %}
+                <p>Current logo: <img src="{{ form.instance.company_logo.url }}" alt="Current company logo" style="max-height: 100px;"></p>
+                {{ form.company_logo }} (Check to clear existing logo)
+            {% else %}
+                {{ form.company_logo }}
+            {% endif %}
+            {{ form.company_logo.errors }}
+            <small>Upload your company logo. Recommended size: 300x100px.</small>
+        </div>
+        <div>
+            <label for="{{ form.primary_brand_color.id_for_label }}">Primary Brand Color:</label>
+            {{ form.primary_brand_color }} {# Recommend using a color picker widget #}
+            {{ form.primary_brand_color.errors }}
+            <small>e.g., #FF5733</small>
+        </div>
+        <div>
+            <label for="{{ form.secondary_brand_color.id_for_label }}">Secondary Brand Color:</label>
+            {{ form.secondary_brand_color }} {# Recommend using a color picker widget #}
+            {{ form.secondary_brand_color.errors }}
+            <small>e.g., #33FF57</small>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Custom Domain (Advanced)</legend>
+        <p>Point your CNAME record for the desired subdomain to: <code>[YourPlatformDomainHere].com</code></p> {# Replace with actual instruction #}
+        <div>
+            <label for="{{ form.custom_domain.id_for_label }}">Custom Domain:</label>
+            {{ form.custom_domain }}
+            {{ form.custom_domain.errors }}
+            <small>e.g., locator.yourcompany.com</small>
+        </div>
+    </fieldset>
+
+    <button type="submit">Save White-Label Settings</button>
+</form>
+
+<a href="{% url 'pro_locator:client_dashboard' %}">Back to Client Dashboard</a>
+{% endblock %}

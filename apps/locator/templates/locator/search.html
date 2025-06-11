@@ -1,0 +1,81 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Search for New Vending Locations</h1>
+
+<form id="searchForm">
+    <div>
+        <label for="zipCode">ZIP Code:</label>
+        <input type="text" id="zipCode" name="zip_code">
+    </div>
+    <div>
+        <label for="radius">Radius (miles):</label>
+        <input type="number" id="radius" name="radius" value="5">
+    </div>
+    <div>
+        <label for="machineType">Machine Type:</label>
+        <select id="machineType" name="machine_type">
+            <option value="drinks">Drinks</option>
+            <option value="snacks">Snacks</option>
+            <option value="combo">Combo</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+    <div>
+        <label for="buildingTypes">Building Types (select multiple):</label>
+        <select id="buildingTypes" name="building_types" multiple>
+            <option value="office">Office</option>
+            <option value="school">School</option>
+            <option value="retail">Retail</option>
+            <option value="residential">Residential</option>
+            <option value="industrial">Industrial</option>
+        </select>
+    </div>
+    <button type="submit">Search</button>
+</form>
+
+<div id="resultsArea">
+    <h2>Results</h2>
+    <div id="loadingIndicator" style="display: none;">
+        <p>Loading...</p>
+    </div>
+    <ul id="resultsList">
+        <!-- Results will be populated here by JavaScript/AJAX -->
+    </ul>
+    <div id="mapView">
+        <!-- Map view could be integrated here -->
+        <p>(Map View Placeholder)</p>
+    </div>
+</div>
+
+<script>
+    // Basic JavaScript for form submission and AJAX request (conceptual)
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const resultsList = document.getElementById('resultsList');
+        loadingIndicator.style.display = 'block';
+        resultsList.innerHTML = ''; // Clear previous results
+
+        // Simulate API call
+        setTimeout(() => {
+            loadingIndicator.style.display = 'none';
+            // Dummy data - replace with actual AJAX call
+            const dummyResults = [
+                { name: 'Location A', address: '123 Main St', priority_score: 85, contact: 'John Doe (555-1234)' },
+                { name: 'Location B', address: '456 Oak Ave', priority_score: 92, contact: 'Jane Smith (555-5678)' }
+            ];
+            dummyResults.forEach(location => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <strong>${location.name}</strong><br>
+                    Address: ${location.address}<br>
+                    Priority Score: ${location.priority_score}<br>
+                    Contact: ${location.contact}
+                `;
+                resultsList.appendChild(listItem);
+            });
+        }, 2000);
+    });
+</script>
+{% endblock %}

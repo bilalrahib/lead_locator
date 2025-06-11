@@ -1,0 +1,65 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Affiliate Marketing Resources</h1>
+
+<p>Here you'll find marketing materials to help you promote VendingHive. Click to copy or download.</p>
+
+{% if affiliate_resources %}
+    <div class="resources-grid">
+        {% for resource in affiliate_resources %}
+        <div class="resource-card">
+            <h3>{{ resource.title }}</h3>
+            <p>{{ resource.description }}</p>
+
+            {% if resource.resource_type == 'banner' and resource.image_file %}
+                <img src="{{ resource.image_file.url }}" alt="{{ resource.title }}" style="max-width: 100%; height: auto;">
+                <p><a href="{{ resource.image_file.url }}" download>Download Banner</a></p>
+            {% elif resource.resource_type == 'email_copy' and resource.text_content %}
+                <h4>Email Subject: {{ resource.email_subject|default:"Check this out!" }}</h4>
+                <textarea readonly rows="10" style="width: 95%;">{{ resource.text_content }}</textarea>
+                <button onclick="copyToClipboard(this, `{{ resource.text_content|escapejs }}`)">Copy Email Body</button>
+            {% elif resource.resource_type == 'social_post' and resource.text_content %}
+                 <textarea readonly rows="5" style="width: 95%;">{{ resource.text_content }}</textarea>
+                 <button onclick="copyToClipboard(this, `{{ resource.text_content|escapejs }}`)">Copy Post Text</button>
+            {% elif resource.resource_type == 'link' %}
+                <p>Promotional Link: <a href="{{ resource.target_url }}?ref={{ user.affiliate_profile.referral_code }}" target="_blank">{{ resource.target_url }}</a></p>
+                 <button onclick="copyToClipboard(this, '{{ resource.target_url }}?ref={{ user.affiliate_profile.referral_code }}')">Copy Link</button>
+            {% endif %}
+
+            <p><small>Type: {{ resource.get_resource_type_display }}</small></p>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No marketing resources are available at this time. Please check back later.</p>
+{% endif %}
+
+<a href="{% url 'affiliates:dashboard' %}">Back to Affiliate Dashboard</a>
+
+<script>
+function copyToClipboard(buttonElement, text) {
+  navigator.clipboard.writeText(text).then(function() {
+    const originalText = buttonElement.textContent;
+    buttonElement.textContent = 'Copied!';
+    setTimeout(() => { buttonElement.textContent = originalText; }, 2000);
+  }, function(err) {
+    alert('Could not copy text: ', err);
+  });
+}
+</script>
+
+<style>
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+.resource-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+}
+.resource-card textarea { margin-bottom: 5px; }
+</style>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Client Details: {{ client_profile.name }}</h1>
+
+<div>
+    <h2>Profile Information</h2>
+    <p><strong>Name:</strong> {{ client_profile.name }}</p>
+    <p><strong>Email:</strong> {{ client_profile.contact_email|default:"N/A" }}</p>
+    <p><strong>Phone:</strong> {{ client_profile.contact_phone|default:"N/A" }}</p>
+    <p><strong>Company:</strong> {{ client_profile.company_name|default:"N/A" }}</p>
+    <p><strong>Notes:</strong> {{ client_profile.notes|linebreaksbr|default:"No notes." }}</p>
+    <a href="{% url 'pro_locator:client_edit' client_profile.id %}">Edit Client Profile</a>
+</div>
+
+<div>
+    <h2>Saved Searches for {{ client_profile.name }}</h2>
+    {% if client_saved_searches %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date Saved</th>
+                    <th>Search Parameters</th>
+                    <th>Results Count</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for search in client_saved_searches %}
+                <tr>
+                    <td>{{ search.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        Zip: {{ search.parameters.zip_code|default:"N/A" }},
+                        Radius: {{ search.parameters.radius|default:"N/A" }} mi,
+                        Type: {{ search.parameters.machine_type|default:"N/A" }}
+                        {% if search.parameters.building_types %}
+                            <br>Buildings: {{ search.parameters.building_types|join:", " }}
+                        {% endif %}
+                    </td>
+                    <td>{{ search.results_count|default:"N/A" }}</td>
+                    <td>
+                        <a href="{% url 'pro_locator:client_search_results' client_profile.id search.id %}">View Results</a> |
+                        <a href="{% url 'pro_locator:client_search_rerun' client_profile.id search.id %}">Re-run Search</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No saved searches for this client yet.</p>
+    {% endif %}
+</div>
+
+<div>
+    <h2>Initiate New Search for {{ client_profile.name }}</h2>
+    <form method="post" action="{% url 'pro_locator:client_initiate_search' client_profile.id %}">
+        {% csrf_token %}
+        {{ new_search_form.as_p }} {# Assuming a Django form passed in context #}
+        <button type="submit">Start New Search</button>
+    </form>
+</div>
+
+<a href="{% url 'pro_locator:client_dashboard' %}">Back to Client Dashboard</a>
+{% endblock %}

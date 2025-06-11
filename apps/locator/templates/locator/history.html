@@ -1,0 +1,37 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Search History</h1>
+
+{% if search_history_list %}
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Search Summary</th>
+                <th>Number of Results</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for search in search_history_list %}
+            <tr>
+                <td>{{ search.timestamp|date:"Y-m-d H:i" }}</td>
+                <td>
+                    Zip: {{ search.parameters.zip_code|default:"N/A" }},
+                    Radius: {{ search.parameters.radius|default:"N/A" }} mi,
+                    Type: {{ search.parameters.machine_type|default:"N/A" }}
+                </td>
+                <td>{{ search.result_count }}</td>
+                <td><a href="{% url 'locator:search_result_detail' search.id %}">View Results</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No search history found.</p>
+{% endif %}
+
+<a href="{% url 'locator:search' %}">Start a New Search</a>
+
+{% endblock %}

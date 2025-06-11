@@ -1,0 +1,146 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Affiliate Dashboard</h1>
+
+{% if not user.is_approved_affiliate %}
+    <p>Your affiliate application is pending review or you have not applied yet.</p>
+    <p><a href="{% url 'affiliates:apply' %}">Apply to the Affiliate Program</a></p>
+{% else %}
+    <h2>Your Referral Link</h2>
+    <input type="text" value="{{ affiliate_dashboard.referral_link }}" readonly id="referralLink" style="width: 80%;">
+    <button onclick="copyReferralLink()">Copy Link</button>
+
+    <h2>Performance Overview</h2>
+    <div class="stats-cards">
+        <div>
+            <h3>Total Clicks</h3>
+            <p>{{ affiliate_dashboard.stats.total_clicks|default:0 }}</p>
+        </div>
+        <div>
+            <h3>Total Conversions (Sign-ups)</h3>
+            <p>{{ affiliate_dashboard.stats.total_conversions|default:0 }}</p>
+        </div>
+        <div>
+            <h3>Conversion Rate</h3>
+            <p>{{ affiliate_dashboard.stats.conversion_rate|default:"0.00" }}%</p>
+        </div>
+        <div>
+            <h3>Total Earnings</h3>
+            <p>${{ affiliate_dashboard.stats.total_earnings|floatformat:2|default:"0.00" }}</p>
+        </div>
+        <div>
+            <h3>Pending Payout</h3>
+            <p>${{ affiliate_dashboard.stats.pending_payout|floatformat:2|default:"0.00" }}</p>
+        </div>
+    </div>
+
+    <h2>Performance Graphs</h2>
+    <div>
+        {# Placeholder for charts - e.g., using Chart.js or similar #}
+        <p>(Chart showing clicks and conversions over time will be here)</p>
+        <canvas id="performanceChart"></canvas>
+    </div>
+
+    <h2>Recent Activity</h2>
+    <h3>Recent Clicks</h3>
+    {% if affiliate_dashboard.recent_clicks %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>IP Address</th>
+                    <th>Referrer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for click in affiliate_dashboard.recent_clicks %}
+                <tr>
+                    <td>{{ click.timestamp|date:"Y-m-d H:i" }}</td>
+                    <td>{{ click.ip_address|default:"N/A" }}</td>
+                    <td>{{ click.referring_url|truncatechars:50|default:"N/A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No recent clicks tracked.</p>
+    {% endif %}
+
+    <h3>Recent Conversions</h3>
+    {% if affiliate_dashboard.recent_conversions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Commission Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conversion in affiliate_dashboard.recent_conversions %}
+                <tr>
+                    <td>{{ conversion.timestamp|date:"Y-m-d H:i" }}</td>
+                    <td>{{ conversion.referred_user.email|default:"N/A" }}</td>
+                    <td>${{ conversion.commission_amount|floatformat:2|default:"0.00" }}</td>
+                    <td>{{ conversion.get_status_display }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No recent conversions tracked.</p>
+    {% endif %}
+
+    <p><a href="{% url 'affiliates:resources' %}">View Marketing Resources</a></p>
+    <p><a href="{% url 'affiliates:payout_history' %}">View Payout History</a></p> {# Assuming this URL exists #}
+
+<script>
+function copyReferralLink() {
+  var copyText = document.getElementById("referralLink");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+  document.execCommand("copy");
+  alert("Copied the link: " + copyText.value);
+}
+
+// Placeholder for chart initialization
+// Example using Chart.js (ensure library is loaded)
+/*
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('performanceChart')) {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'line', // or 'bar', etc.
+            data: {
+                labels: {{ affiliate_dashboard.chart_data.labels|safe }}, // Pass labels from context
+                datasets: [
+                    {
+                        label: 'Clicks',
+                        data: {{ affiliate_dashboard.chart_data.clicks_data|safe }},
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Conversions',
+                        data: {{ affiliate_dashboard.chart_data.conversions_data|safe }},
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+});
+*/
+</script>
+{% endif %}
+{% endblock %}

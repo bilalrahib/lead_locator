@@ -1,0 +1,105 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Sales Script Generator</h1>
+
+<form id="scriptGeneratorForm">
+    {% csrf_token %} {# If submitting via POST to Django backend #}
+    <div>
+        <label for="scriptType">Select Script Type:</label>
+        <select id="scriptType" name="script_type">
+            <option value="initial_contact">Initial Contact</option>
+            <option value="follow_up">Follow-up</option>
+            <option value="objection_handling">Objection Handling</option>
+            {# Add more script types as defined in the application #}
+        </select>
+    </div>
+    <div>
+        <label for="targetLocationName">Target Location Name:</label>
+        <input type="text" id="targetLocationName" name="target_location_name">
+    </div>
+    <div>
+        <label for="targetCategory">Target Business Category:</label>
+        <input type="text" id="targetCategory" name="target_category">
+    </div>
+    <div>
+        <label for="machineType">Proposed Machine Type:</label>
+        <select id="machineType" name="machine_type">
+            <option value="drinks">Drinks</option>
+            <option value="snacks">Snacks</option>
+            <option value="combo">Combo</option>
+            <option value="coffee">Coffee</option>
+            {# Add more machine types #}
+        </select>
+    </div>
+    <button type="button" id="generateScriptBtn">Generate Script</button> {# Changed to type="button" for AJAX #}
+</form>
+
+<h2>Generated Script</h2>
+<textarea id="generatedScriptOutput" rows="15" cols="80" readonly>
+(Generated script will appear here...)
+</textarea>
+<button type="button" id="regenerateScriptBtn">Regenerate</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const generateBtn = document.getElementById('generateScriptBtn');
+    const regenerateBtn = document.getElementById('regenerateScriptBtn');
+    const scriptOutput = document.getElementById('generatedScriptOutput');
+    const form = document.getElementById('scriptGeneratorForm');
+
+    const fetchScript = () => {
+        const formData = new FormData(form);
+        // In a real app, you'd get the CSRF token from the form or a global variable
+        // const csrfToken = formData.get('csrfmiddlewaretoken');
+
+        // For demonstration, constructing query params for a GET or data for POST
+        const params = new URLSearchParams();
+        for (const pair of formData) {
+            if (pair[0] !== 'csrfmiddlewaretoken') { // Don't send CSRF in GET params
+                params.append(pair[0], pair[1]);
+            }
+        }
+
+        scriptOutput.value = "Generating script...";
+
+        // Replace with your actual API endpoint
+        // fetch(`/api/ai_toolkit/generate_script/?${params.toString()}`, { // For GET
+        fetch("{% url 'ai_toolkit:generate_script_api' %}", { // Placeholder for Django URL
+            method: 'POST', // Or 'GET'
+            headers: {
+                // 'X-CSRFToken': csrfToken, // Needed for POST if CSRF is enforced
+                'Content-Type': 'application/x-www-form-urlencoded', // if sending form data in body
+            },
+            body: params.toString() // For POST
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.script) {
+                scriptOutput.value = data.script;
+            } else if (data.error) {
+                scriptOutput.value = `Error: ${data.error}`;
+            } else {
+                scriptOutput.value = "Failed to generate script. Unknown error.";
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching script:', error);
+            scriptOutput.value = `Error generating script: ${error.message}. Check console for details.`;
+        });
+    };
+
+    if (generateBtn) {
+        generateBtn.addEventListener('click', fetchScript);
+    }
+    if (regenerateBtn) {
+        regenerateBtn.addEventListener('click', fetchScript); // Regenerate calls the same function
+    }
+});
+</script>
+{% endblock %}

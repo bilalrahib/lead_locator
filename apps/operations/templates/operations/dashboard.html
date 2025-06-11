@@ -1,0 +1,84 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Operations Dashboard</h1>
+
+<h2>Key Stats</h2>
+<div class="key-stats-cards">
+    <div>
+        <h3>Total Locations</h3>
+        <p>{{ location_summary.total_locations|default:"N/A" }}</p>
+    </div>
+    <div>
+        <h3>Total Machines</h3>
+        <p>{{ location_summary.total_machines|default:"N/A" }}</p>
+    </div>
+    <div>
+        <h3>Monthly Revenue</h3>
+        <p>${{ financial_summary.monthly_revenue|floatformat:2|default:"0.00" }}</p>
+    </div>
+    <div>
+        <h3>Net Profit</h3>
+        <p>${{ financial_summary.net_profit|floatformat:2|default:"0.00" }}</p>
+    </div>
+</div>
+
+<h2>Managed Locations</h2>
+{% if location_summary.locations %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Machines</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for location in location_summary.locations %}
+            <tr>
+                <td>{{ location.name }}</td>
+                <td>{{ location.address }}</td>
+                <td>{{ location.machine_count }}</td>
+                <td>{{ location.status }}</td>
+                <td><a href="{% url 'operations:location_detail' location.id %}">View Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No managed locations yet.</p>
+{% endif %}
+<a href="{% url 'operations:location_create' %}">Add New Location</a>
+
+<h2>Recent Activity</h2>
+{% if visit_summary.recent_visits %}
+    <h3>Latest Visit Logs</h3>
+    <ul>
+        {% for visit in visit_summary.recent_visits %}
+        <li>
+            {{ visit.timestamp|date:"Y-m-d H:i" }} - {{ visit.location.name }} - {{ visit.notes|truncatewords:10 }}
+            (<a href="{% url 'operations:visit_detail' visit.id %}">Details</a>)
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No recent visits logged.</p>
+{% endif %}
+
+{% if financial_summary.recent_collections %}
+    <h3>Latest Collections</h3>
+    <ul>
+        {% for collection in financial_summary.recent_collections %}
+        <li>
+            {{ collection.visit_log.timestamp|date:"Y-m-d" }}: ${{ collection.amount|floatformat:2 }} from {{ collection.visit_log.location.name }}
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No recent collections.</p>
+{% endif %}
+<a href="{% url 'operations:visit_log_create' %}">Log New Visit/Collection</a>
+
+{% endblock %}

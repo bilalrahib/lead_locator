@@ -1,0 +1,116 @@
+{% extends "project_core/base.html" %} {# Or a specific admin base template #}
+
+{% block content %}
+<h1>User Management</h1>
+
+<div class="user-filters">
+    <form method="get">
+        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search by email, name...">
+        <select name="plan">
+            <option value="">Any Subscription Plan</option>
+            {% for plan in available_plans %} {# Pass 'available_plans' in context #}
+                <option value="{{ plan.id }}" {% if request.GET.plan == plan.id|stringformat:"s" %}selected{% endif %}>{{ plan.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="status">
+            <option value="">Any Status</option>
+            <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactive</option>
+            <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending Approval</option>
+        </select>
+        <button type="submit">Filter/Search</button>
+        <a href="{% url 'admin_panel:user_management' %}">Clear Filters</a>
+    </form>
+</div>
+
+{% if users_list %}
+    <p>Displaying {{ users_list.start_index }} - {{ users_list.end_index }} of {{ users_list.paginator.count }} users.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Subscription Plan</th>
+                <th>Status</th>
+                <th>Date Joined</th>
+                <th>Is Affiliate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user_profile in users_list %} {# Assuming user_profile objects that link to User #}
+            <tr>
+                <td>{{ user_profile.user.id }}</td>
+                <td><a href="{% url 'admin_panel:user_detail' user_profile.user.id %}">{{ user_profile.user.email }}</a></td>
+                <td>{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</td>
+                <td>{{ user_profile.subscription.plan.name|default:"None" }}</td>
+                <td>
+                    {% if user_profile.user.is_active %}Active{% else %}Inactive{% endif %}
+                    {% if user_profile.needs_approval %} (Pending Approval){% endif %}
+                </td>
+                <td>{{ user_profile.user.date_joined|date:"Y-m-d" }}</td>
+                <td>{% if user_profile.user.is_approved_affiliate %}Yes{% else %}No{% endif %}</td>
+                <td>
+                    <a href="{% url 'admin_panel:user_detail' user_profile.user.id %}" class="button-small">View</a>
+                    <a href="{% url 'admin_panel:user_edit' user_profile.user.id %}" class="button-small">Edit</a>
+                    {% if user_profile.user.is_active %}
+                        <a href="{% url 'admin_panel:user_deactivate' user_profile.user.id %}" class="button-small-warning">Deactivate</a>
+                    {% else %}
+                        <a href="{% url 'admin_panel:user_activate' user_profile.user.id %}" class="button-small-success">Activate</a>
+                    {% endif %}
+                    {# Add more actions like 'Change Subscription', 'Approve Affiliate' etc. These would typically be POST requests #}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if users_list.has_previous %}
+                <a href="?page=1{{ request.GET|urlencode_params_except:'page' }}">&laquo; first</a>
+                <a href="?page={{ users_list.previous_page_number }}{{ request.GET|urlencode_params_except:'page' }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ users_list.number }} of {{ users_list.paginator.num_pages }}.
+            </span>
+
+            {% if users_list.has_next %}
+                <a href="?page={{ users_list.next_page_number }}{{ request.GET|urlencode_params_except:'page' }}">next</a>
+                <a href="?page={{ users_list.paginator.num_pages }}{{ request.GET|urlencode_params_except:'page' }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+{% else %}
+    <p>No users found matching your criteria.</p>
+{% endif %}
+
+<a href="{% url 'admin_panel:user_create' %}" class="button">Create New User</a>
+
+{# Custom template filter for pagination links (put in a templatetags file) #}
+{# {% load custom_filters %} #}
+{# Example: request.GET|urlencode_params_except:'page' #}
+{# Create a templatetags/custom_filters.py in your app:
+from django import template
+register = template.Library()
+@register.filter
+def urlencode_params_except(get_params, exclude_key):
+    encoded = []
+    for key, value_list in get_params.lists():
+        if key != exclude_key:
+            for value in value_list:
+                encoded.append(f"&{key}={value}")
+    return "".join(encoded)
+#}
+
+<style>
+.user-filters form { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
+.pagination { margin-top: 20px; }
+.button-small, .button-small-warning, .button-small-success { padding: 5px 8px; font-size: 0.9em; }
+/* Add more specific styles as needed */
+</style>
+
+{% endblock %}

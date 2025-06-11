@@ -1,0 +1,45 @@
+{% comment %} Assuming this will be included in a page with a form tag {% endcomment %}
+{% csrf_token %}
+{{ visit_form.non_field_errors }}
+{{ collection_form.non_field_errors }}
+
+<h2>Visit Details</h2>
+<div>
+    <label for="{{ visit_form.managed_location.id_for_label }}">Location:</label>
+    {{ visit_form.managed_location }}
+    {{ visit_form.managed_location.errors }}
+</div>
+<div>
+    <label for="{{ visit_form.timestamp.id_for_label }}">Timestamp:</label>
+    {{ visit_form.timestamp }} {# Recommend datetime picker widget #}
+    {{ visit_form.timestamp.errors }}
+</div>
+<div>
+    <label for="{{ visit_form.visit_type.id_for_label }}">Visit Type:</label>
+    {{ visit_form.visit_type }}
+    {{ visit_form.visit_type.errors }}
+</div>
+<div>
+    <label for="{{ visit_form.notes.id_for_label }}">Notes:</label>
+    {{ visit_form.notes }}
+    {{ visit_form.notes.errors }}
+</div>
+
+<h2>Collection Data (Optional)</h2>
+<div>
+    <label for="{{ collection_form.amount.id_for_label }}">Amount Collected:</label>
+    {{ collection_form.amount }}
+    {{ collection_form.amount.errors }}
+</div>
+<div>
+    <label for="{{ collection_form.method.id_for_label }}">Collection Method:</label>
+    {{ collection_form.method }}
+    {{ collection_form.method.errors }}
+</div>
+<div>
+    <label for="{{ collection_form.notes.id_for_label }}">Collection Notes:</label>
+    {{ collection_form.notes }}
+    {{ collection_form.notes.errors }}
+</div>
+
+<button type="submit">Log Visit/Collection</button>

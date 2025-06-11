@@ -1,0 +1,75 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Apply for the Affiliate Program</h1>
+
+{% if user.is_authenticated and user.is_approved_affiliate %}
+    <p>You are already an approved affiliate. <a href="{% url 'affiliates:dashboard' %}">Go to your dashboard</a>.</p>
+{% elif user.is_authenticated and affiliate_application_exists %} {# Context var indicating an application exists #}
+    <p>Your affiliate application has been submitted and is currently under review. We will notify you once a decision is made.</p>
+    <p><a href="{% url 'project_core:dashboard' %}">Back to main dashboard</a>.</p>
+{% else %}
+    <p>Join our affiliate program and earn commissions by referring new users to VendingHive!</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <fieldset>
+            <legend>Your Information</legend>
+            {% if not user.is_authenticated %}
+                <p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">log in</a> or <a href="{% url 'accounts:signup' %}?next={{ request.path }}">sign up</a> to apply.</p>
+                {# Or include user creation fields if anonymous applications are allowed and create user on submission #}
+            {% endif %}
+
+            <div>
+                <label for="{{ form.website_url.id_for_label }}">Your Website URL (Optional):</label>
+                {{ form.website_url }}
+                {{ form.website_url.errors }}
+                <small>e.g., https://www.yourblog.com</small>
+            </div>
+            <div>
+                <label for="{{ form.social_media_profiles.id_for_label }}">Social Media Profile(s) (Optional):</label>
+                {{ form.social_media_profiles }}
+                {{ form.social_media_profiles.errors }}
+                <small>Links to your relevant social media pages (e.g., LinkedIn, Twitter, YouTube). One per line.</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Marketing & Promotion</legend>
+            <div>
+                <label for="{{ form.marketing_experience.id_for_label }}">Describe your marketing experience:</label>
+                {{ form.marketing_experience }}
+                {{ form.marketing_experience.errors }}
+                <small>How do you plan to promote VendingHive?</small>
+            </div>
+            <div>
+                <label for="{{ form.primary_traffic_sources.id_for_label }}">Primary Traffic Sources:</label>
+                {{ form.primary_traffic_sources }}
+                {{ form.primary_traffic_sources.errors }}
+                <small>e.g., SEO, PPC, Email Marketing, Social Media. One per line.</small>
+            </div>
+            <div>
+                <label for="{{ form.audience_description.id_for_label }}">Describe your audience:</label>
+                {{ form.audience_description }}
+                {{ form.audience_description.errors }}
+                <small>Who are the people you'll be promoting to?</small>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Agreement</legend>
+            <div>
+                {{ form.agreed_to_terms }}
+                <label for="{{ form.agreed_to_terms.id_for_label }}"> I have read and agree to the <a href="{% url 'affiliates:terms' %}" target="_blank">Affiliate Program Terms and Conditions</a>.</label>
+                {{ form.agreed_to_terms.errors }}
+            </div>
+        </fieldset>
+
+        <button type="submit" {% if not user.is_authenticated %}disabled{% endif %}>Submit Application</button>
+        {% if not user.is_authenticated %}
+        <p><small>You must be logged in to submit an application.</small></p>
+        {% endif %}
+    </form>
+{% endif %}
+{% endblock %}

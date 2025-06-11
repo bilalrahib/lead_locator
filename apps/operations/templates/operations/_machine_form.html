@@ -1,0 +1,40 @@
+{% comment %} Assuming this will be included in a page with a form tag {% endcomment %}
+{% csrf_token %}
+{{ form.non_field_errors }}
+
+<input type="hidden" name="managed_location" value="{{ managed_location.id }}"> {# Or however the location is passed #}
+
+<div>
+    <label for="{{ form.identifier.id_for_label }}">Identifier:</label>
+    {{ form.identifier }}
+    {{ form.identifier.errors }}
+</div>
+<div>
+    <label for="{{ form.machine_type.id_for_label }}">Machine Type:</label>
+    {{ form.machine_type }}
+    {{ form.machine_type.errors }}
+</div>
+<div>
+    <label for="{{ form.status.id_for_label }}">Status:</label>
+    {{ form.status }}
+    {{ form.status.errors }}
+</div>
+<div>
+    <label for="{{ form.installation_date.id_for_label }}">Installation Date:</label>
+    {{ form.installation_date }} {# Recommend using a date picker widget #}
+    {{ form.installation_date.errors }}
+</div>
+<div>
+    <label for="{{ form.last_serviced_date.id_for_label }}">Last Serviced Date:</label>
+    {{ form.last_serviced_date }} {# Recommend using a date picker widget #}
+    {{ form.last_serviced_date.errors }}
+</div>
+<div>
+    <label for="{{ form.notes.id_for_label }}">Notes:</label>
+    {{ form.notes }}
+    {{ form.notes.errors }}
+</div>
+
+{# Add other fields from PlacedMachine model as needed #}
+
+<button type="submit">Save Machine</button>

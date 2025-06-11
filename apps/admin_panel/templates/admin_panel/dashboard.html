@@ -1,0 +1,101 @@
+{% extends "project_core/base.html" %} {# Or a specific admin base template if available #}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<div class="admin-quick-actions">
+    <a href="{% url 'admin_panel:user_management' %}" class="button">Manage Users</a>
+    <a href="{% url 'admin_panel:content_management' %}" class="button">Manage Content</a>
+    <a href="{% url 'admin:index' %}" class="button" target="_blank">Full Django Admin</a>
+    {# Add more quick action buttons as needed #}
+</div>
+
+<h2>Platform Health Overview</h2>
+<div class="stats-cards">
+    <div>
+        <h3>Total Users</h3>
+        <p>{{ dashboard_stats.total_users|default:0 }}</p>
+    </div>
+    <div>
+        <h3>Active Subscriptions</h3>
+        <p>{{ dashboard_stats.active_subscriptions|default:0 }}</p>
+    </div>
+    <div>
+        <h3>Monthly Recurring Revenue (MRR)</h3>
+        <p>${{ dashboard_stats.mrr|floatformat:2|default:"0.00" }}</p>
+    </div>
+    <div>
+        <h3>New Signups (Last 30 Days)</h3>
+        <p>{{ dashboard_stats.new_signups_30d|default:0 }}</p>
+    </div>
+    <div>
+        <h3>Pending Affiliate Applications</h3>
+        <p>{{ dashboard_stats.pending_affiliate_applications|default:0 }}</p>
+    </div>
+</div>
+
+<h2>User Overview</h2>
+<div class="admin-section">
+    {# Placeholder for a small chart or summary of user roles/plans #}
+    <p><strong>Users by Subscription Plan:</strong></p>
+    <ul>
+        {% for plan_stat in user_overview.by_plan %}
+            <li>{{ plan_stat.plan_name }}: {{ plan_stat.count }} users</li>
+        {% empty %}
+            <li>No subscription data available.</li>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'admin_panel:user_management' %}?status=active">View All Active Users</a></p>
+</div>
+
+<h2>Subscription Overview</h2>
+<div class="admin-section">
+    {# Placeholder for subscription trends or critical alerts #}
+    <p><strong>Recent Subscription Changes:</strong></p>
+    <ul>
+        {% for sub_event in subscription_overview.recent_events %}
+            <li>{{ sub_event.timestamp|date:"Y-m-d" }}: {{ sub_event.user.email }} - {{ sub_event.event_type }} ({{ sub_event.details }})</li>
+        {% empty %}
+            <li>No recent subscription events.</li>
+        {% endfor %}
+    </ul>
+    <p><a href="#">View Subscription Analytics</a> {# Link to a more detailed page #}</p>
+</div>
+
+<h2>Recent Admin Logs</h2>
+<div class="admin-section">
+    {% if admin_logs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Object</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log_entry in admin_logs %}
+                <tr>
+                    <td>{{ log_entry.action_time|date:"Y-m-d H:i" }}</td>
+                    <td>{{ log_entry.user.username }}</td>
+                    <td>{{ log_entry.get_change_message }}</td>
+                    <td>{{ log_entry.object_repr }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No recent admin log entries.</p>
+    {% endif %}
+     <p><a href="{% url 'admin:index' %}admin/logentry/" target="_blank">View All Admin Logs</a></p>
+</div>
+
+<style>
+.admin-quick-actions .button { margin-right: 10px; margin-bottom: 10px; }
+.stats-cards { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+.stats-cards > div { background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 5px; min-width: 180px; }
+.admin-section { margin-bottom: 20px; padding:15px; border: 1px solid #eee; border-radius: 5px;}
+</style>
+
+{% endblock %}

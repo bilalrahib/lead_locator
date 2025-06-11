@@ -1,0 +1,147 @@
+{% extends "project_core/base.html" %} {# Or a specific admin base template #}
+
+{% block content %}
+<h1>Content Template Management</h1>
+
+<p>Manage reusable content snippets (e.g., for emails, help sections, dynamic page content).</p>
+
+<button type="button" onclick="showContentModal()">Create New Template</button> {# Or link to a new page #}
+
+<h2>Existing Content Templates</h2>
+{% if content_templates %}
+    <table>
+        <thead>
+            <tr>
+                <th>Key/Slug</th>
+                <th>Title</th>
+                <th>Last Modified</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for template_obj in content_templates %}
+            <tr>
+                <td><code>{{ template_obj.key }}</code></td>
+                <td>{{ template_obj.title }}</td>
+                <td>{{ template_obj.updated_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <button type="button" onclick="showContentModal('{{ template_obj.id }}')">Edit</button>
+                    {# Add view/delete functionality as needed #}
+                    <a href="{% url 'admin_panel:content_template_delete' template_obj.id %}" class="button-small-warning" onclick="return confirm('Are you sure you want to delete this template?');">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No content templates found. <button type="button" onclick="showContentModal()">Create one now.</button></p>
+{% endif %}
+
+{# Modal for Create/Edit - Basic Structure (can be improved significantly) #}
+<div id="contentTemplateModal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;">
+    <div style="background:white; width:60%; margin: 10% auto; padding:20px; border-radius:5px;">
+        <h2 id="modalTitle">Create/Edit Content Template</h2>
+        <form id="contentTemplateForm" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="templateId" name="template_id">
+            <div>
+                <label for="templateKey">Key/Slug:</label>
+                <input type="text" id="templateKey" name="key" required>
+                <small>A unique identifier for this template (e.g., 'welcome_email_subject').</small>
+            </div>
+            <div>
+                <label for="templateTitle">Title:</label>
+                <input type="text" id="templateTitle" name="title" required>
+                <small>A descriptive title for internal reference.</small>
+            </div>
+            <div>
+                <label for="templateContent">Content:</label>
+                <textarea id="templateContent" name="content" rows="10" style="width:98%;" required></textarea>
+                <small>The actual content. Supports Django template tags if rendered via Django's template engine.</small>
+            </div>
+            <button type="submit">Save Template</button>
+            <button type="button" onclick="hideContentModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Basic modal and form handling logic
+const modal = document.getElementById('contentTemplateModal');
+const form = document.getElementById('contentTemplateForm');
+const templateIdInput = document.getElementById('templateId');
+const templateKeyInput = document.getElementById('templateKey');
+const templateTitleInput = document.getElementById('templateTitle');
+const templateContentInput = document.getElementById('templateContent');
+const modalTitle = document.getElementById('modalTitle');
+
+function showContentModal(template_id = null) {
+    form.reset(); // Clear previous data
+    templateIdInput.value = ''; // Clear ID
+
+    if (template_id) {
+        modalTitle.textContent = 'Edit Content Template';
+        // In a real app, fetch template data via AJAX for editing
+        // For now, let's assume you might pass data via a JS object or data attributes if preloaded
+        // Example: const data = preloaded_template_data[template_id];
+        // templateIdInput.value = data.id;
+        // templateKeyInput.value = data.key;
+        // ...
+        // This part needs actual data fetching logic for edit.
+        // For now, it will just open a blank "edit" form.
+        templateIdInput.value = template_id; // Set the ID for submission
+        // You'd typically fetch the existing data and populate the form here.
+        // For this example, we'll simulate it.
+        // This is a placeholder. You need to fetch data for the given template_id.
+        console.log("Attempting to edit template_id:", template_id, ". Fetch data and populate form.");
+        // As a simple placeholder, if you have data available globally or can fetch it:
+        // const existingTemplate = Array.from(document.querySelectorAll('table tr[data-id="' + template_id + '"]'))[0];
+        // if (existingTemplate) {
+        //     templateKeyInput.value = existingTemplate.cells[0].textContent.trim();
+        //     templateTitleInput.value = existingTemplate.cells[1].textContent.trim();
+        //     // Fetching content for textarea would be more complex or require an API call
+        // }
+
+
+    } else {
+        modalTitle.textContent = 'Create New Content Template';
+    }
+    modal.style.display = 'block';
+}
+
+function hideContentModal() {
+    modal.style.display = 'none';
+}
+
+// Handle form submission (conceptual)
+// You would likely submit this via AJAX or standard form POST to a Django view
+form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const id = formData.get('template_id');
+    const url = id ? `{% url 'admin_panel:content_template_edit' 0 %}`.replace('0', id) : `{% url 'admin_panel:content_template_create' %}`;
+
+    // Replace with actual fetch/AJAX submission
+    console.log(`Submitting to: ${url}`, Object.fromEntries(formData));
+    alert('Form submission logic needs to be implemented (e.g., AJAX POST). Check console.');
+    // Example:
+    /*
+    fetch(url, { method: 'POST', body: formData, headers: {'X-CSRFToken': '{{ csrf_token }}'} })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                hideContentModal();
+                window.location.reload(); // Or update table dynamically
+            } else {
+                alert('Error: ' + (data.errors || 'Could not save template.'));
+            }
+        })
+        .catch(err => alert('Save failed: ' + err));
+    */
+    hideContentModal(); // Hide modal after "submission" for now
+});
+</script>
+<style>
+/* Basic styling for modal */
+</style>
+{% endblock %}

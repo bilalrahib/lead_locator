@@ -1,0 +1,59 @@
+{% extends "project_core/base.html" %}
+
+{% block content %}
+<h1>Location Details: {{ managed_location.name }}</h1>
+
+<div>
+    <h2>Information</h2>
+    <p><strong>Address:</strong> {{ managed_location.address }}</p>
+    <p><strong>Contact Name:</strong> {{ managed_location.contact_name|default:"N/A" }}</p>
+    <p><strong>Contact Phone:</strong> {{ managed_location.contact_phone|default:"N/A" }}</p>
+    <p><strong>Contact Email:</strong> {{ managed_location.contact_email|default:"N/A" }}</p>
+    <p><strong>Status:</strong> {{ managed_location.status }}</p>
+    <a href="{% url 'operations:location_edit' managed_location.id %}">Edit Location Details</a>
+</div>
+
+<div>
+    <h2>Machines at this Location</h2>
+    {% if placed_machines %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Identifier</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Last Serviced</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for machine in placed_machines %}
+                <tr>
+                    <td>{{ machine.identifier }}</td>
+                    <td>{{ machine.get_machine_type_display }}</td>
+                    <td>{{ machine.get_status_display }}</td>
+                    <td>{{ machine.last_serviced_date|date:"Y-m-d"|default:"N/A" }}</td>
+                    <td>
+                        <a href="{% url 'operations:machine_edit' managed_location.id machine.id %}">Edit</a> |
+                        <a href="{% url 'operations:machine_delete' managed_location.id machine.id %}">Remove</a>
+                        {# Add link to log service/visit for this machine #}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No machines currently placed at this location.</p>
+    {% endif %}
+    <a href="{% url 'operations:machine_add' managed_location.id %}">Add New Machine to this Location</a>
+</div>
+
+<div>
+    <h2>Visit History & Collections</h2>
+    {# Placeholder for visit history and collections specific to this location #}
+    <p>(Visit history and collections will be displayed here)</p>
+    <a href="{% url 'operations:visit_log_create' %}?location_id={{ managed_location.id }}">Log New Visit/Collection for this Location</a>
+</div>
+
+<a href="{% url 'operations:dashboard' %}">Back to Dashboard</a>
+{% endblock %}
